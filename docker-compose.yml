@@ -1,37 +1,38 @@
-version: '3'
+version: "3.8"
 
 services:
     frontend:
-        build:
-            context: ./front
-            dockerfile: Dockerfile
+        build: ./frontend
         ports:
-            - "3000:3000"
+            - "80:3000"
+        expose:
+            - "80"
+        container_name: ED_frontend
+        environment:
+            - REACT_APP_GOOGLE_MAP_API_KEY=AIzaSyCKTTrmDykNuCPxrKd1fnCFBmszb4V3taM
+            - REACT_APP_SERVICE_ID=service_x6bjhd5
+            - REACT_APP_TEMPLATE_ID=template_uxvqs4p
+            - REACT_APP_PUBLIC_KEY=lysH6B4MYaWkXHg2a
+            - REACT_APP_SERVER_ADDRESS=backend
         depends_on:
             - backend
-
     backend:
-        build:
-            context: ./server
-            dockerfile: Dockerfile
+        build: ./backend
         ports:
             - "5000:5000"
+        expose:
+            - "5000"
+         container_name: ED_backend
         environment:
             - SERVER_PORT=5000
-            - SERVER_HOST=localhost
             - DB_NAME=education_department
             - DB_USER=root
-            - DB_USER_PASSWORD=root
-            - DB_HOST=localhost
+            - DB_USER_PASSWORD=h9_W2l@jddw_@1db
+            - DB_HOST=mysql_db_net
             - DB_DIALECT=mysql
-        depends_on:
-            - db
+        networks:
+            - "mysql_db_net"
 
-    db:
-        image: mysql:latest
-        restart: always
-        environment:
-            MYSQL_ROOT_PASSWORD: root
-            MYSQL_DATABASE: root
-        ports:
-            - "3306:3306"
+networks:
+    mysql_db_net:
+        external: true
