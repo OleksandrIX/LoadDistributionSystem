@@ -1,6 +1,6 @@
 [submodule "frontend"]
 	path = frontend
-	url = https://github.com/OleksandrIX/EducationDepartmentFrontend.git
+	url = ../EducationDepartmentFrontend.git
 [submodule "backend"]
 	path = backend
-	url = https://github.com/OleksandrIX/EducationDepartmentBackend.git
+	url = ../EducationDepartmentBackend.git
