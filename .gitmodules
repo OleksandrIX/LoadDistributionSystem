@@ -1,6 +1,6 @@
 [submodule "frontend"]
 	path = frontend
-	url = ../EducationDepartmentFrontend.git
+	url = ../LoadDistibutionFrontend.git
 [submodule "backend"]
 	path = backend
-	url = ../EducationDepartmentBackend.git
+	url = ../LoadDistibutionBackend.git
