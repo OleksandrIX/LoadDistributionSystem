@@ -1,0 +1,27 @@
+services:
+    postgresql-db:
+        image: postgres:${POSTGRESQL_IMAGE_TAG}
+        container_name: postgresql-db-container
+        restart: always
+        ports:
+            - "${POSTGRESQL_PORT}:5432"
+        expose:
+            - ${POSTGRESQL_PORT}
+        environment:
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_ROOT_PASSWORD}
+        volumes:
+            - ./init:/docker-entrypoint-initdb.d
+            - postgresql-db-data:/var/lib/postgresql/data
+        networks:
+            - postgresql-db-network
+
+networks:
+    postgresql-db-network:
+        driver: bridge
+        name: postgresql-db-network
+
+volumes:
+    postgresql-db-data:
+        driver: local
+        name: postgresql-db-data
