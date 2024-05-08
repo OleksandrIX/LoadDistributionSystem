@@ -1,0 +1,65 @@
+x-minio-common: &minio-common
+    image: minio/minio:${MINIO_IMAGE_TAG}
+    command: server --console-address ":${MINIO_WEB_UI_PORT}" http://minio-storage/mnt/data{1...2}
+    ports:
+      - ${MINIO_API_PORT}:${MINIO_API_PORT}
+      - ${MINIO_WEB_UI_PORT}:${MINIO_WEB_UI_PORT}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${MINIO_API_PORT}/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+services:
+  minio-storage:
+    <<: *minio-common
+    container_name: minio-storage-container
+    hostname: minio-storage
+    restart: always
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    volumes:
+      - minio-data1:/mnt/data1
+      - minio-data2:/mnt/data2
+    networks:
+      - minio-storage-network
+
+  create-minio-buckets:
+    image: minio/mc:${MINIO_MC_IMAGE_TAG}
+    container_name: create-minio-buckets
+    depends_on:
+      - minio-storage
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set minio http://minio-storage:${MINIO_API_PORT} ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
+      if /usr/bin/mc ls minio/${MINIO_BUCKET_NAME}; then
+        echo 'Bucket already exists';
+      else
+        /usr/bin/mc mb minio/${MINIO_BUCKET_NAME};
+        /usr/bin/mc policy set public minio/${MINIO_BUCKET_NAME};
+      fi;
+      exit 0;
+      "
+    networks:
+      - minio-storage-network
+
+volumes:
+  minio-data1:
+    name: minio-data1
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./minio-data/minio-data1
+  minio-data2:
+    name: minio-data2
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./minio-data/minio-data2
+
+networks:
+  minio-storage-network:
+    name: minio-storage-network
