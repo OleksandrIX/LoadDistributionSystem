@@ -1,8 +1,12 @@
 DC = docker compose
+
 BACKEND_SERVICE = load-distribution-api
 FRONTEND_SERVICE = load-distribution-client
+
 DATABASE_FILE = database/docker-compose.yml
-MINIO_STORAGE_FILE = minio-sorage/docker-compose.yml
+
+MINIO_STORAGE_DIR = minio-storage
+MINIO_STORAGE_FILE = minio-storage/docker-compose.yml
 
 
 # Backend commands
@@ -41,19 +45,19 @@ frontend-logs:
 
 # Database commands
 database-config:
-	${DC} -f ${BACKEND_SERVICE} config
+	${DC} -f ${DATABASE_FILE} config
 
 database-build-and-up:
-	${DC} -f ${BACKEND_SERVICE} up --build -d
+	${DC} -f ${DATABASE_FILE} up --build -d
 
 database-up:
-	${DC} -f ${BACKEND_SERVICE} up -d
+	${DC} -f ${DATABASE_FILE} up -d
 
 database-down:
-	${DC} -f ${BACKEND_SERVICE} down
+	${DC} -f ${DATABASE_FILE} down
 
 database-logs:
-	${DC} -f ${BACKEND_SERVICE} logs -f
+	${DC} -f ${DATABASE_FILE} logs -f
 
 
 # MinIO commands
@@ -73,3 +77,6 @@ minio-storage-down:
 
 minio-storage-logs:
 	${DC} -f ${BACKEND_SERVICE} logs -f
+
+minio-storage-create-dirs:
+	mkdir -p ${MINIO_STORAGE_DIR}/minio-data/minio-data1 ${MINIO_STORAGE_DIR}/minio-data/minio-data2
