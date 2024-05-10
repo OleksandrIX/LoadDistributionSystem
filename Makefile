@@ -20,7 +20,7 @@ backend-up:
 	${DC} up ${BACKEND_SERVICE} -d
 
 backend-down:
-	${DC} down ${BACKEND_SERVICE} -d
+	${DC} down ${BACKEND_SERVICE}
 
 backend-logs:
 	${DC} logs ${BACKEND_SERVICE} -f
